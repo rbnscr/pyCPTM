@@ -3,6 +3,7 @@ Created on Mon Jul 25 09:31:54 2022
 
 @author: schro22
 """
+import sys
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.sparse import bsr_matrix
@@ -57,7 +58,7 @@ class CPTMSimple:
             self.__cptIdx = cptIdx
 
     def calc_cpt_volume(self, phaseAlpha = []):
-        if self.cptIdx == []:
+        if self.cptIdx.size == 0:
             print("Compartment indices have to be defined.")
         else:
             # try:
@@ -130,7 +131,7 @@ class CPTMSimple:
             idxCpt[cellsInCluster] = labels
         self.cptIdx = idxCpt
         self.calc_n_cpt()
-        # self.calc_cpt_volume()
+        self.calc_cpt_volume()
 
     def planar_slices(self, nSlices, sliceStart, sliceEnd, dim):
         # Wäre schon besser, wenn alle slice-Methoden erst gecached werden würden und dann am Ende könnte man mergen
@@ -315,11 +316,12 @@ class CPTMSimple:
     def solve_tracer(self):
         if not (
             hasattr(self, "cptVolume")
-            or hasattr(self, "exchangeFlowGraph")
-            or hasattr(self, "initialTracerConcentration")
-            or hasattr(self, "t")
+            and hasattr(self, "exchangeFlowGraph")
+            and hasattr(self, "initialTracerConcentration")
+            and hasattr(self, "t")
         ):
-            return
+            print(f"One or more attribute(s) is missing: \ncptVolume {hasattr(self, "cptVolume")}, \nexchangeFlowGraph {hasattr(self, "exchangeFlowGraph")}, \ninitialTracerConcentration {hasattr(self, "initialTracerConcentration")}, \nt {hasattr(self, "t")}\nExiting program.")
+            sys.exit(0)
         else:
 
             exchangeFlowGraph = self.exchangeFlowGraph.multiply(1 / self.cptVolume)
@@ -459,7 +461,7 @@ class CPTMSimple:
     #     CPTMSimple()
 
     def get_cpt_at_coordinate(self, coordinates):
-        if self.cptIdx != []:
+        if self.cptIdx.size != 0:
             return int(self.cptIdx[
                 np.argmin(np.sum((self.cellCoordinates - coordinates) ** 2, axis=1))
             ])

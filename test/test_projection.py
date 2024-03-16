@@ -69,3 +69,4 @@ def test_answer():
     
     assert checkerboardModel.nCpt == 16
     assert (checkerboardModel.cptIdx == checkerboardTestIdx).all()
+# %%
