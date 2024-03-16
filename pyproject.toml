@@ -1,6 +1,49 @@
 [build-system]
-requires = [
-    "setuptools>=42",
-    "wheel"
-]
+requires = ["setuptools"]
+
 build-backend = "setuptools.build_meta"
+
+
+[project]
+name = "pyCPTM"
+
+version = "0.0.1"
+
+description = "CFD-based Compartment Modelling in Python"
+
+readme = "README.md"
+requires-python = ">=3.12"
+license = {file = "LICENSE"}
+keywords = ["compartment", "model", "modelling", "CFD", "OpenFOAM"]
+
+authors = [
+  {name = "Robin Schröder", email = "robin.schroeder94@googlemail.com" }
+]
+
+maintainers = [
+  {name = "Robin Schröder", email = "robin.schroeder94@googlemail.com" }
+]
+
+
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+
+  "Intended Audience :: Science/Research",
+  "Intended Audience :: Education",
+  "Intended Audience :: Chemical Engineering",
+  "Topic :: Scientific/Engineering",
+  "Topic :: Scientific/Engineering :: Fluid Dynamics",
+
+  "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+
+  "Programming Language :: Python :: 3.12",
+
+]
+
+dependencies = [
+  "numpy",
+  "scipy",
+  "matplotlib",
+  "pandas",
+  "pytest"
+]
