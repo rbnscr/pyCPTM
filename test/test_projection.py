@@ -1,6 +1,6 @@
 #%% Load modules
 
-from pyCPTM.cptm import CPTMSimple
+from pyCPTM.cptm.cptm_simple import CPTMSimple
 
 import pandas as pd
 

@@ -6,7 +6,7 @@ from scipy.sparse import csc_matrix
 from scipy.sparse.csgraph import connected_components
 
 from scipy.integrate import solve_ivp
-from .basic_models import tracer_model_sparse
+from pyCPTM.cptm.basic_models import tracer_model_sparse
 import pandas as pd
 
 from pyCPTM.io import load_mesh_from_case

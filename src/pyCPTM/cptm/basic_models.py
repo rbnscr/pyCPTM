@@ -5,5 +5,5 @@ def tracer_model_sparse(t, y, Q):
     # Delafosse (2014)
     return scalar_conv(Q, y)
 
-def scalar_conv(Q,y):
+def scalar_conv(Q, y):
     return Q.dot(y)
