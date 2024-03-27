@@ -140,5 +140,5 @@ examples/
 docs/Einf*
 
 # dev
-src/pyCPTM/cptm/multiphase
+src/pyCPTM/cptm/multiphase/
 
