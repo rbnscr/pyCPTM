@@ -13,7 +13,7 @@ from pyCPTM.io import load_mesh_from_case
 from pyCPTM.io import load_phi
 from pyCPTM.io import write_steady_scalar_to_case
 
-from pyCPTM.utilities import *
+from pyCPTM.utilities import sort_unsort
 
 import time
 
@@ -551,4 +551,4 @@ class CPTMSimple:
 
     def clear_idx(self, region):
         # Clears a region from any compartment indices / Creates a new single compartment at the location
-        self.set_idxCache(region,setAll = True)
+        self.set_idxCache(region, setAll = True)

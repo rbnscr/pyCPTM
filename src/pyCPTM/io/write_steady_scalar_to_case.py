@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Jun 29 11:10:43 2022
-
-@author: schro22
-"""
 import numpy as np
 from pyCPTM.utilities import timesteps_from_case_as_string
 import os
@@ -61,10 +55,3 @@ def _write_foot():
     )
 
     return foot_string
-
-
-# write_scalar_to_case(
-#     pathToCase="M:/Schroeder/Code/pyCPTM/data/stirredTankDynamicMesh",
-#     scalarName="test",
-#     scalar=np.array([1, 2, 3, 4, 5]),
-# )

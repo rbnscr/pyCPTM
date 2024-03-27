@@ -1,11 +1,6 @@
-# if __name__ == "__main__":
-#    print("Load")
 from pathlib import Path
 import re
 import numpy as np
-
-# import os
-
 
 def load_mesh_from_case(pathToCase=[], maxFaceNumber=10**6):
     if isinstance(pathToCase,str):

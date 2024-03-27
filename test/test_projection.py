@@ -62,7 +62,7 @@ checkerboardTestIdx = [0,8,1,9,10,2,11,3,4,12,5,13,14,6,15,7]
 
 
 
-def test_answer():
+def test_projection():
     assert cm.nCpt == 8
     assert cm.nCell == 16
     assert (cm.cptIdx == testIdx).all()

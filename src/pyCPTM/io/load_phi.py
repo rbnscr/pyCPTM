@@ -1,7 +1,8 @@
 from pathlib import Path
 import numpy as np
-from ..utilities import find_matches
-from ..utilities import timesteps_from_case_as_string
+
+from pyCPTM.utilities import find_matches
+from pyCPTM.utilities import timesteps_from_case_as_string
 
 
 def load_phi(
