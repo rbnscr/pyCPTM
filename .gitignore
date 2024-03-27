@@ -7,6 +7,7 @@ __pycache__/
 .vscode/
 devtools/
 
+
 # C extensions
 *.so
 
@@ -137,3 +138,7 @@ dmypy.json
 data/
 examples/
 docs/Einf*
+
+# dev
+src/pyCPTM/cptm/multiphase/
+

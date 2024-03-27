@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Aug  5 13:46:30 2022
-
-@author: robin
-"""
-
 import numpy as np
 # import matplotlib.pyplot as plt
 

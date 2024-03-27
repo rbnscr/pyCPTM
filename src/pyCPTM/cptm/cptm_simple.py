@@ -1,8 +1,3 @@
-"""
-Created on Mon Jul 25 09:31:54 2022
-
-@author: schro22
-"""
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
@@ -11,14 +6,14 @@ from scipy.sparse import csc_matrix
 from scipy.sparse.csgraph import connected_components
 
 from scipy.integrate import solve_ivp
-from .basic_models import tracer_model_sparse
+from pyCPTM.cptm.basic_models import tracer_model_sparse
 import pandas as pd
 
 from pyCPTM.io import load_mesh_from_case
 from pyCPTM.io import load_phi
 from pyCPTM.io import write_steady_scalar_to_case
 
-from pyCPTM.utilities import *
+from pyCPTM.utilities import sort_unsort
 
 import time
 
@@ -556,4 +551,4 @@ class CPTMSimple:
 
     def clear_idx(self, region):
         # Clears a region from any compartment indices / Creates a new single compartment at the location
-        self.set_idxCache(region,setAll = True)
+        self.set_idxCache(region, setAll = True)

@@ -1,13 +1,9 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Jun 29 11:10:43 2022
-
-@author: schro22
-"""
 import numpy as np
+import os
+
 from pyCPTM.utilities import timesteps_from_case_as_string
 from pyCPTM.io.write_steady_scalar_to_case import _write_header, _write_foot
-import os
+
 
 def write_transient_scalar_to_case(pathToCase=[], scalarName=[], scalar=np.array([])):
     # Number of entries, that go into the file
