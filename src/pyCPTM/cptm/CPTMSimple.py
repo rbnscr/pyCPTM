@@ -1,8 +1,3 @@
-"""
-Created on Mon Jul 25 09:31:54 2022
-
-@author: schro22
-"""
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
