@@ -18,12 +18,14 @@ from pyCPTM.utilities import sort_unsort
 import time
 
 class CPTMSimple:
+    """Baseline compartment modeling class with all the needed meshing and compartmentalization methods
+    """
     def __init__(
         self,
         internalMesh,
         internalPhi,
-        cellVolume,
-        cellCoordinates,
+        cellVolume: np.ndarray,
+        cellCoordinates: np.ndarray,
         cellData=[],
         cptIdx=[],
     ):
@@ -52,32 +54,39 @@ class CPTMSimple:
         if len(cptIdx) == self.nCell:
             self.__cptIdx = cptIdx
 
-    def calc_cpt_volume(self, phaseAlpha = []):
+    def calc_cpt_volume(self, phaseAlpha: np.ndarray = []):
+        """Calculates the volume of all compartments.
+
+        Args:
+            phaseAlpha (np.ndarray, optional): Volume-portion of a given phase per cell. Only useful with multiphase approaches, which are not yet implemented. Defaults to [], which sets phaseAlpha to 1 for each cell.
+        """
         if self.cptIdx.size == 0:
+            # Returns if there are no compartments defined yet.
             print("Compartment indices have to be defined.")
         else:
-            # try:
             self.calc_n_cpt()
             if phaseAlpha == []:
                 phaseAlpha = np.ones(self.nCell)
-            cptVolume = np.zeros(self.nCpt)
+            cptVolume: np.ndarray = np.zeros(self.nCpt) # Initialize volume array
+
+            # Calculation of the compartment volumes
             for i in range(self.nCpt):
                 cptVolume[i] = self.cellVolume[self.cptIdx == i].T.dot(phaseAlpha[self.cptIdx == i])
             self.cptVolume = cptVolume
             print(f"Volume(s) of {self.nCpt} compartment(s) calculated.")
-            # except AttributeError:
-            #     print("Forgot to calculate number of compartments.")
-            #     self.calc_n_cpt()
-            #     print("Restarting calc_cpt_volume...")
-            #     self.calc_cpt_volume()
 
     def calc_n_cpt(self):
+        """Calculate the number of compartments.
+        """
         self.nCpt = len(np.unique(self.cptIdx))
-        # print(f"Number of compartments: {self.nCpt}")
+        print(f"Number of compartments: {self.nCpt}")
+        # If the compartment indices don't line up with the compartment number, the compartment are renumbered.
         if max(self.cptIdx + 1) != self.nCpt:
             self.renumber()
 
     def renumber(self):
+        """Renumber the compartment indices. Followed by a recalculation of the number of compartments.
+        """
         newIndex = 0
         for i in np.unique(self.cptIdx):
             self.cptIdx[self.cptIdx == i] = newIndex
@@ -87,13 +96,19 @@ class CPTMSimple:
         print(f"{self.nCpt} compartments renumbered.")
 
     def projection(self):
+        """Spatially projects the compartments. Cells, that belong to the same compartment, but are not continuously connected, are assigned new compartment indices. This method does not work with dynamic mesh approach.
+        """
         print(f"Number of compartments before projection: {self.nCpt}")
-        # Does not work with dynamic mesh approach
-        idxCpt = np.zeros(len(self.cellCoordinates), dtype=np.int32)
-        idxCpt = idxCpt - 1
-        check = np.zeros(len(self.internalMesh), dtype=np.int32)
-        newIndex = 0
 
+        # New compartment indice array is initialized. All unassigned cells have the value -1. The indexing starts at 0.
+        idxCpt = np.zeros(len(self.cellCoordinates), dtype=np.int32) 
+        idxCpt = idxCpt - 1 
+        newIndex = 0
+        # check = np.zeros(len(self.internalMesh), dtype=np.int32)
+
+        # Looping over all present compartment indices. 
+        # The projected compartments must have at least the same amount of compartments as before the projection.
+        # All unprojected compartments are called _cluster_ in the following loop.
         for cluster in range(self.nCpt):
             internalMesh = np.copy(self.internalMesh)
             cellsInCluster = np.where(self.cptIdx == cluster)
@@ -103,6 +118,7 @@ class CPTMSimple:
                 np.isin(internalMesh[:, 0], cellsInCluster),
                 np.isin(internalMesh[:, 1], cellsInCluster),
             )
+
             # "New" Mesh for the creation of a sparse matrix
             internalMesh = internalMesh[facesInCluster]
 
@@ -111,6 +127,8 @@ class CPTMSimple:
                 (np.ones(len(internalMesh)), (internalMesh[:, 1], internalMesh[:, 0])),
                 shape=(self.nCell, self.nCell),
             )
+
+            # Analyze the connected components of the sparse graph _graph_
             _nComponents, labels = connected_components(
                 csgraph=graph, directed=False, return_labels=True
             )
@@ -129,7 +147,8 @@ class CPTMSimple:
         self.calc_cpt_volume()
 
     def planar_slices(self, nSlices, sliceStart, sliceEnd, dim):
-        # Wäre schon besser, wenn alle slice-Methoden erst gecached werden würden und dann am Ende könnte man mergen
+
+        # ISSUE: would be nicer, if all slice-methods would be cached and could then be consolidated at the end.
         # Initialize new compartment indices
         idxCpt = np.zeros(len(self.cellCoordinates), dtype=np.int32)
         idxCpt = idxCpt - 1
@@ -158,6 +177,11 @@ class CPTMSimple:
             self.cptIdx = idxCpt
 
     def plot_idx(self, compartment=[]):
+        """Plotting indices of a given compartment(s).
+
+        Args:
+            compartment (list, optional): Compartment indice to be plotted. Defaults to [].
+        """
         if self.cptIdx.size == 0:
             print("Compartment indices have to be defined.")
         elif compartment == []:
@@ -180,11 +204,12 @@ class CPTMSimple:
             )
 
     def conv_exchange_flow(self):
-        # Transitioning matrix based on Delafosse (2014)
-        # Calculate number of compartments
+        """Calculated the convective transitioning matrix based on Delafosse (2014) (http://dx.doi.org/10.1016/j.ces.2013.11.033)
+        """
 
         if not hasattr(self, "nCpt"):
             self.calc_n_cpt()
+
         # Flip internalMesh, so that all flows are positive
         _internalMesh = np.copy(self.internalMesh)
         _internalMesh[:, [0, 1]] = _internalMesh[:, [1, 0]]
@@ -200,15 +225,15 @@ class CPTMSimple:
 
         # Sort owner and neighbour
         ownerSorted, ownerUnsortIndex = sort_unsort(internalMeshFlipped[:, 0])
-        # maxOwner = ownerSorted[-1]
         neighbourSorted, neighbourUnsortIndex = sort_unsort(internalMeshFlipped[:, 1])
-        # maxNeighbour = neighbourSorted[-1]
 
         # Setup for the _first_ loop
         firstEntryOwner = 0
         firstEntryNeighbour = 0
         # return ownerSorted
 
+        # Adding 25 is kind of a hack to (drastiacally) speed up the algorithm. It is assumed that no cell has more than 25 faces. 
+        # Calculating the max number of faces per cell however is also slow.
         for i in range(self.nCell + 1):
             try:
                 lastEntryOwner = (
@@ -281,7 +306,7 @@ class CPTMSimple:
                 nonDiagonalInternalPhi[entriesForCompartmentPair]
             )
         # Create sparse matrix
-        exchangeFlowGraph = csc_matrix(
+        exchangeFlowGraph: csc_matrix = csc_matrix(
             (
                 nonDiagonalCompartmentPhi,
                 (
@@ -298,17 +323,32 @@ class CPTMSimple:
         exchangeFlowGraph.setdiag(graphDiag)
 
         self.exchangeFlowGraph = exchangeFlowGraph
-        return exchangeFlowGraph
+        # return exchangeFlowGraph
 
-    def init_tracer(self, compartments, tracerAmount):
+    def init_tracer(self, compartments: list, tracerAmount: float):
+        """Initializes conservative tracer in compartments
+
+        Args:
+            compartments (list): List of compartments that the tracer concentration shall be initialized
+            tracerAmount (float): Tracer concentration that is initialized
+        """
         initialConcentration = np.zeros(self.nCpt)
         initialConcentration[compartments] = tracerAmount
         self.initialTracerConcentration = np.asarray(initialConcentration)
 
-    def init_timespan(self, startTime, endTime, timeStep):
+    def init_timespan(self, startTime: float, endTime: float, timeStep: float):
+        """Initialize the timespan of the virtual tracer simulation. Wrapper for numpy.linspace.
+
+        Args:
+            startTime (float): Start time
+            endTime (float): endTime
+            timeStep (float): timeStep
+        """
         self.t = np.linspace(startTime, endTime, timeStep)
 
     def solve_tracer(self):
+        """Starts and solves the virtual tracer simulation.
+        """
         if not (
             hasattr(self, "cptVolume")
             and hasattr(self, "exchangeFlowGraph")
@@ -499,7 +539,7 @@ class CPTMSimple:
 
         if self.cptIdxCache.shape[1] != 1:
 
-            start = time.time()
+            # start = time.time()
 
             idxCpt = np.zeros(self.nCell)
 
@@ -519,8 +559,8 @@ class CPTMSimple:
             #     print(f"Cell {j} done.")
             #     newIndex = 0
 
-            end = time.time()
-            print(end - start)
+            # end = time.time()
+            # print(end - start)
 
         else:
             idxCpt = np.copy(self.cptIdxCache[:,0])

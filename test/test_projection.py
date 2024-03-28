@@ -69,4 +69,3 @@ def test_projection():
     
     assert checkerboardModel.nCpt == 16
     assert (checkerboardModel.cptIdx == checkerboardTestIdx).all()
-# %%
