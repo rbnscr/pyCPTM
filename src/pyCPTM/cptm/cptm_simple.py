@@ -560,7 +560,7 @@ class CPTMSimple:
             #     newIndex = 0
 
             # end = time.time()
-            print(end - start)
+            # print(end - start)
 
         else:
             idxCpt = np.copy(self.cptIdxCache[:,0])
