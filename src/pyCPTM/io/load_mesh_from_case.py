@@ -2,7 +2,16 @@ from pathlib import Path
 import re
 import numpy as np
 
-def load_mesh_from_case(pathToCase=[], maxFaceNumber=10**6):
+def load_mesh_from_case(pathToCase: str, maxFaceNumber: int = 10**6):
+    """Parser that reads a mesh file from an OpenFOAM case.
+
+    Args:
+        pathToCase (str): Path to an OpenFOAM case.
+        maxFaceNumber (int, optional): Maximum number of faces inside the mesh. Defaults to 10**6.
+
+    Returns:
+        owner, neighbour, (boundaryNames, startFace): _description_
+    """
     if isinstance(pathToCase,str):
         # String to constant/polyMesh folder
         data_dir = Path(pathToCase + r"\constant\polyMesh")
